@@ -1,0 +1,416 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+
+#include "Unit2.h"
+#include "Unit1.h"
+//---------------------------------------------------------------------------
+#pragma package(smart_init)
+#pragma link "frxClass"
+#pragma link "frxDBSet"
+#pragma resource "*.dfm"
+TForm2 *Form2;
+//---------------------------------------------------------------------------
+__fastcall TForm2::TForm2(TComponent* Owner)
+	: TForm(Owner)
+{
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TForm2::Button1Click(TObject *Sender)
+{
+	if(Enis->Text=="" || Enisn->Text=="" || Enama->Text=="" || Eagama->Text=="" || Eparents->Text=="" || Malamat->Lines->Text=="" || Eijazah->Text=="" || Etahun->Text=="" || kelas->Text=="" )
+		{
+			MessageBoxA(0,"Data masih ada yang kosong!","Warning",MB_ICONWARNING | MB_OK);
+		}
+	else
+		{
+			DM1->QuerySekolah->Close();
+			DM1->QuerySekolah->SQL->Clear();
+			DM1->QuerySekolah->SQL->Add("select * from siswa");
+			DM1->QuerySekolah->Open();
+			DM1->QuerySekolah->Append();
+				DM1->QuerySekolah->FieldByName("NIS")->AsString=Enis->Text;
+				DM1->QuerySekolah->FieldByName("NISN")->AsString=Enisn->Text;
+				DM1->QuerySekolah->FieldByName("Nama")->AsString=Enama->Text;
+				if(RGgender->ItemIndex==0)
+					{
+						DM1->QuerySekolah->FieldByName("Gender")->AsString="L";
+					}
+				else if(RGgender->ItemIndex==1)
+					{
+						DM1->QuerySekolah->FieldByName("Gender")->AsString="P";
+					}
+				DM1->QuerySekolah->FieldByName("TempatLahir")->AsString=Etempat->Text;
+				DM1->QuerySekolah->FieldByName("TanggalLahir")->AsString=Etanggal->Text;
+				DM1->QuerySekolah->FieldByName("Agama")->AsString=Eagama->Text;
+				DM1->QuerySekolah->FieldByName("Parents")->AsString=Eparents->Text;
+				DM1->QuerySekolah->FieldByName("Alamat")->AsString=Malamat->Lines->Text;
+				DM1->QuerySekolah->FieldByName("NoIjazah")->AsString=Eijazah->Text;
+				DM1->QuerySekolah->FieldByName("TahunIjazah")->AsString=Etahun->Text;
+				DM1->QuerySekolah->FieldByName("Kelas")->AsString=kelas->Text;
+			DM1->QuerySekolah->Post();
+			MessageBoxA(0,"Data berhasil disimpan!","Information",MB_ICONINFORMATION | MB_OK);
+			Enis->Clear();
+			Enisn->Clear();
+			Enama->Clear();
+			programstudi->Clear();
+			kompetensi->Clear();
+			kelas->Clear();
+			RGgender->ItemIndex=0;
+			Etempat->Clear();
+			Etanggal->Clear();
+			Eagama->Clear();
+			Eparents->Clear();
+			Malamat->Clear();
+			Eijazah->Clear();
+			Etahun->Clear();
+			Button1->Enabled=false;
+			Button3->Enabled=false;
+		}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm2::Button3Click(TObject *Sender)
+{
+	DM1->QuerySekolah->Close();
+	DM1->QuerySekolah->SQL->Clear();
+	DM1->QuerySekolah->SQL->Add("select * from siswa where kelas ='"+kelas->Text+"'");
+	DM1->QuerySekolah->Open();
+	ReportSiswa->PrepareReport();
+	ReportSiswa->ShowReport();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm2::Button4Click(TObject *Sender)
+{
+	if(username->Text=="" || password->Text=="")
+		{
+			MessageBoxA(0,"Masukan username dan password","Warning",MB_ICONWARNING | MB_OK);
+		}
+	else
+		{
+			DM1->QueryUser->Close();
+			DM1->QueryUser->SQL->Clear();
+			DM1->QueryUser->SQL->Add("select * from user where username='"+username->Text+"'");
+			DM1->QueryUser->Open();
+
+				if(!DM1->QueryUser->IsEmpty())
+					{
+						if(DM1->QueryUser->FieldByName("password")->AsString==password->Text)
+						{
+							MessageBoxA(0,"Selamat Datang!","Information",MB_ICONINFORMATION | MB_OK);
+							for(panellogin->Left=panellogin->Left;panellogin->Left>(-2000);panellogin->Left--)panellogin->Left=panellogin->Left-10;
+							{
+
+							}
+						}
+						else
+						{
+							MessageBoxA(0,"Password Salah","Warning",MB_ICONWARNING | MB_OK);
+						}
+					}
+				else
+					{
+						MessageBoxA(0,"Username Salah!","Warning",MB_ICONWARNING | MB_OK);
+					}
+		}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm2::bidangstudiChange(TObject *Sender)
+{
+	if(bidangstudi->Text=="Bisnis Manajemen")
+		{
+			programstudi->Clear();
+			kompetensi->Clear();
+			kelas->Clear();
+			programstudi->Items->Clear();
+			programstudi->Items->Add("Administrasi Perkantoran");
+			programstudi->Items->Add("Akuntansi");
+			programstudi->Items->Add("Tata Niaga");
+		}
+	else
+		{
+			programstudi->Clear();
+			kompetensi->Clear();
+			kelas->Clear();
+			programstudi->Items->Clear();
+			programstudi->Items->Add("Teknologi Komputer");
+		}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm2::programstudiChange(TObject *Sender)
+{
+	if(programstudi->Text=="Administrasi Perkantoran")
+		{
+			kompetensi->Clear();
+			kelas->Clear();
+			kompetensi->Items->Clear();
+			kompetensi->Items->Add("Sekretaris");
+		}
+	else if(programstudi->Text=="Akuntansi")
+		{
+			kompetensi->Clear();
+			kelas->Clear();
+			kompetensi->Items->Clear();
+			kompetensi->Items->Add("Keuangan");
+		}
+	else if(programstudi->Text=="Tata Niaga")
+		{
+			kompetensi->Clear();
+			kelas->Clear();
+			kompetensi->Items->Clear();
+			kompetensi->Items->Add("Pemasaran");
+		}
+	else if(programstudi->Text=="Teknologi Komputer")
+		{
+			kompetensi->Clear();
+			kelas->Clear();
+			kompetensi->Items->Clear();
+			kompetensi->Items->Add("Rekayasa Perangkat Lunak");
+		}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm2::kompetensiChange(TObject *Sender)
+{
+	if(kompetensi->Text=="Sekretaris")
+		{
+			kelas->Clear();
+			kelas->Items->Clear();
+			kelas->Items->Add("XII AP1");
+			kelas->Items->Add("XII AP2");
+			kelas->Items->Add("XI AP1");
+			kelas->Items->Add("XI AP2");
+			kelas->Items->Add("X AP1");
+			kelas->Items->Add("X AP2");
+		}
+	else if(kompetensi->Text=="Keuangan")
+		{
+			kelas->Clear();
+			kelas->Items->Clear();
+			kelas->Items->Add("XII AK1");
+			kelas->Items->Add("XII AK2");
+			kelas->Items->Add("XI AK1");
+			kelas->Items->Add("XI AK2");
+			kelas->Items->Add("X AK1");
+			kelas->Items->Add("X AK2");
+		}
+	else if(kompetensi->Text=="Pemasaran")
+		{
+			kelas->Clear();
+			kelas->Items->Clear();
+			kelas->Items->Add("XII PM1");
+			kelas->Items->Add("XII PM2");
+			kelas->Items->Add("XI PM1");
+			kelas->Items->Add("XI PM2");
+			kelas->Items->Add("X PM1");
+			kelas->Items->Add("X PM2");
+		}
+	else if(kompetensi->Text=="Rekayasa Perangkat Lunak")
+		{
+			kelas->Clear();
+			kelas->Items->Clear();
+			kelas->Items->Add("XII RPL");
+			kelas->Items->Add("XI RPL");
+			kelas->Items->Add("X RPL");
+		}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm2::FormShow(TObject *Sender)
+{
+	Label30->Caption="DAFTAR NAMA SISWA SEKOLAH MENENGAH KEJURUAN (SMK)\nDILINGKUNGAN DINAS PENDIDIKAN PROVINSI DKI JAKARTA\nTAHUN PELAJARAN 2013/2014";
+
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm2::kelasChange(TObject *Sender)
+{
+	if(kelas->Text=="")
+		{
+			Button1->Enabled=false;
+			Button3->Enabled=false;
+		}
+	else
+		{
+			Button1->Enabled=true;
+			Button3->Enabled=true;
+		}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm2::Button2Click(TObject *Sender)
+{
+	Enis->Clear();
+	Enisn->Clear();
+	Enama->Clear();
+	programstudi->Clear();
+	kompetensi->Clear();
+	kelas->Clear();
+	RGgender->ItemIndex=0;
+	Etempat->Clear();
+	Etanggal->Clear();
+	Eagama->Clear();
+	Eparents->Clear();
+	Malamat->Clear();
+	Eijazah->Clear();
+	Etahun->Clear();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm2::Image2Click(TObject *Sender)
+{
+	Application->Minimize();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm2::Image1Click(TObject *Sender)
+{
+	Application->Terminate();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm2::Label33MouseMove(TObject *Sender, TShiftState Shift, int X,
+          int Y)
+{
+	Label33->Font->Color=clAqua;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm2::Label33MouseLeave(TObject *Sender)
+{
+	Label33->Font->Color=clWhite;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm2::Label33Click(TObject *Sender)
+{
+	for(paneldaftar->Left=paneldaftar->Left;paneldaftar->Left>(-2000);paneldaftar->Left--)paneldaftar->Left=paneldaftar->Left-10;
+	{
+
+	}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm2::Label37MouseMove(TObject *Sender, TShiftState Shift, int X,
+		  int Y)
+{
+	Label37->Font->Color=clAqua;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm2::Label37MouseLeave(TObject *Sender)
+{
+	Label37->Font->Color=clWhite;
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm2::Label37Click(TObject *Sender)
+{
+	for(paneldaftar->Left=paneldaftar->Left;paneldaftar->Left<0;paneldaftar->Left++)paneldaftar->Left=paneldaftar->Left+10;
+	{
+
+	}
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TForm2::Button5Click(TObject *Sender)
+{
+	if(EUsernameDaftar->Text=="" || EPasswordDaftar->Text=="")
+		{
+			MessageBoxA(0,"Isi data dahulu!","Warning",MB_ICONWARNING | MB_OK);
+		}
+	else
+		{
+			DM1->QueryUser->Close();
+			DM1->QueryUser->SQL->Clear();
+			DM1->QueryUser->SQL->Add("select * from user");
+			DM1->QueryUser->Open();
+			DM1->QueryUser->Append();
+				if(DM1->QueryUser->FieldByName("username")->AsString==EUsernameDaftar->Text)
+					{
+						MessageBoxA(0,"Sudah ada yang menggunakan Username tersebut","Warning",MB_ICONWARNING | MB_OK);
+					}
+				else
+					{
+						DM1->QueryUser->FieldByName("username")->AsString=EUsernameDaftar->Text;
+						DM1->QueryUser->FieldByName("password")->AsString=EPasswordDaftar->Text;
+					}
+			DM1->QueryUser->Post();
+			MessageBoxA(0,"Anda berhasil mendaftar!","Information",MB_ICONINFORMATION | MB_OK);
+			EUsernameDaftar->Clear();
+			EPasswordDaftar->Clear();
+			for(paneldaftar->Left=paneldaftar->Left;paneldaftar->Left>(-2000);paneldaftar->Left--)paneldaftar->Left=paneldaftar->Left-10;
+		}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm2::passwordKeyDown(TObject *Sender, WORD &Key, TShiftState Shift)
+
+{
+	if(Key == VK_RETURN)
+		{
+			Button4->Click();
+		}
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TForm2::usernameKeyDown(TObject *Sender, WORD &Key, TShiftState Shift)
+
+{
+	if(Key == VK_RETURN)
+		{
+			Button4->Click();
+		}
+}
+//---------------------------------------------------------------------------
+
+
+void __fastcall TForm2::Button6Click(TObject *Sender)
+{
+	if(cari->Text=="")
+		{
+			MessageBoxA(0,"Masukan NIS Siswa yang akan dicari!","Warning",MB_ICONWARNING | MB_OK);
+		}
+	else
+		{
+			DM1->QuerySekolah->Close();
+			DM1->QuerySekolah->SQL->Clear();
+			DM1->QuerySekolah->SQL->Add("select * from siswa where nis='"+cari->Text+"'");
+			DM1->QuerySekolah->Open();
+				if(!DM1->QuerySekolah->IsEmpty())
+					{
+							Enis->Text=DM1->QuerySekolah->FieldByName("NIS")->AsString;
+							Enisn->Text=DM1->QuerySekolah->FieldByName("NISN")->AsString;
+							Enama->Text=DM1->QuerySekolah->FieldByName("Nama")->AsString;
+							if(DM1->QuerySekolah->FieldByName("Gender")->AsString=="L")
+								{
+									RGgender->ItemIndex=0;
+								}
+							else if(DM1->QuerySekolah->FieldByName("Gender")->AsString=="P")
+								{
+									RGgender->ItemIndex=1;
+								}
+							Etempat->Text=DM1->QuerySekolah->FieldByName("TempatLahir")->AsString;
+							Etanggal->Text=DM1->QuerySekolah->FieldByName("TanggalLahir")->AsString;
+							Eagama->Text=DM1->QuerySekolah->FieldByName("Agama")->AsString;
+							Eparents->Text=DM1->QuerySekolah->FieldByName("Parents")->AsString;
+							Malamat->Lines->Text=DM1->QuerySekolah->FieldByName("Alamat")->AsString;
+							Eijazah->Text=DM1->QuerySekolah->FieldByName("NoIjazah")->AsString;
+							Etahun->Text=DM1->QuerySekolah->FieldByName("TahunIjazah")->AsString;
+					}
+				else if(DM1->QuerySekolah->IsEmpty())
+					{
+						MessageBoxA(0,"NIS tidak ada dalam daftar!","Warning",MB_ICONWARNING | MB_OK);
+						cari->Clear();
+                    }
+		}
+}
+//---------------------------------------------------------------------------
+
